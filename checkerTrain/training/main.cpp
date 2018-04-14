@@ -11,7 +11,7 @@ int main(int argc, char *argv[])
 //    Board board("rrrrrrrrrrrr________bbbbbbbbbbbb", 'r', true);
 //    //Board board;
 //    return app->run(board);
-    for(int i=0; i<1000; i++) {
+    for(int i=196; i<500000; i++) {
         Tournament checkTourney(i,50);
         checkTourney.playTournament();
     }

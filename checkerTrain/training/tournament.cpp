@@ -50,9 +50,11 @@ void Tournament::playTournament() {
     std::default_random_engine generator(std::chrono::system_clock::now().time_since_epoch().count());
     std::uniform_int_distribution<int> distribution(0,popSize-1);
     int gameCounter=0;
-	omp_set_num_threads(4);
+    omp_set_num_threads(50);
 	
-	#pragma omp parallel for
+    #pragma omp parallel
+    {
+    #pragma omp for     
     for(int i=0; i<popSize; i++){
         int j=0;
         while(j<5) {
@@ -61,14 +63,19 @@ void Tournament::playTournament() {
             if(num != i) {
                 tournScore[i] += playGame(gameCounter,i,num);
                 j++;
+		#pragma omp atomic
                 gameCounter++;
             }
         }
     }
+    }
+    
+
     std::ofstream myFile(fileBase+"FINALSCORES");
     for(auto i: tournScore) {
         myFile<< std::to_string(i) + "\n";
     }
+    
     myFile.close();
     chooseWinners();
 
