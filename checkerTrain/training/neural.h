@@ -29,7 +29,7 @@ public:
     };
 
     neuralNet();
-    neuralNet(std::string b);
+    neuralNet(std::string b, bool ai);
     std::vector<theMove> requestMove(bool whoT);
     void updateBoard(std::string b);
     std::vector<std::vector<theMove>> getRedMoves(){ return redMoves; };

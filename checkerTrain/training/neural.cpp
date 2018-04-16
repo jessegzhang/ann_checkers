@@ -35,7 +35,7 @@ neuralNet::neuralNet(){
 //neuralNet
 //Constructor call with board state
 //Generates all moves with given board
-neuralNet::neuralNet(std::string b){
+neuralNet::neuralNet(std::string b, bool ai){
     for(char x : b) {
         boardKey.push_back(x);
     }
@@ -65,7 +65,7 @@ neuralNet::neuralNet(std::string b){
 
 
     //initalization of piece count vs non piece count
-    dumbAI=false;
+    dumbAI=ai;
 
 }
 
@@ -726,6 +726,9 @@ void neuralNet::evolveWeights(std::string file){
     //evolve sigma and weights based on set requirements defined in homework
     for(int j=0; j<weights.size(); j++) {
         sigmaWeights[j]= sigmaWeights[j]*exp(tau*weightDistribution(generator));
+	if(sigmaWeights[j]>1 || sigmaWeights[j]<0) {
+	    sigmaWeights[j]=0.05;
+	}
         weights[j]= weights[j] + sigmaWeights[j]*weightDistribution(generator);
         if(weights[j]>1) {
             weights[j]=1;
