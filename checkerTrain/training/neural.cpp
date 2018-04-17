@@ -77,20 +77,41 @@ std::vector<neuralNet::theMove> neuralNet::requestMove(bool whoT) {
     //random AI Moves
     //This is the flag for turning on the dumbAI that does moves at random
     //Training should look to beat this and piece count
-    if(dumbAI){
+    if(true){
+        //initalization of the possible moves
         std::vector<std::vector<theMove>> origMoves;
-        if (whoT){
-            origMoves = getRedMoves(boardKey);
-            std::vector<neuralNet::theMove> temp = origMoves[rand()%origMoves.size()];
-            boardKey=translateMove(temp, boardKey);
-
-            return temp;
+        //initalizes maxPlayer for the minimax tree with alpha beta pruning
+        if (whoT) {
+             origMoves = getRedMoves(boardKey);
+            maxPlayer = 'r';
         } else {
             origMoves = getBlackMoves(boardKey);
-            std::vector<neuralNet::theMove> temp = origMoves[rand()%origMoves.size()];
-            boardKey=translateMove(temp, boardKey);
-            return temp;
+            maxPlayer = 'b';
         }
+        int it = 0;
+        double val = -1000;
+        //calls the minimax with the first depth
+        for (int i = 0; i < origMoves.size(); i++) {
+            //does a miniMax tree with a depth of 8
+            double value;
+            if (whoT) {
+                //red turn max
+                value = miniMaxPC(translateMove(origMoves[i], boardKey), 'b', 9, -100000, 100000);
+            } else {
+                value = miniMaxPC(translateMove(origMoves[i], boardKey), 'r', 9, -100000, 100000);
+            }
+
+            if (value > val) {
+                it = i;
+                val = value;
+            }
+
+        }
+        //translates the best move obtained from minimax
+        boardKey=translateMove(origMoves[it], boardKey);
+        //sends the move
+        return origMoves[it];
+    }
 
         //smartAIMoves
     } else {
@@ -112,9 +133,9 @@ std::vector<neuralNet::theMove> neuralNet::requestMove(bool whoT) {
             double value;
             if (whoT) {
                 //red turn max
-                value = miniMax(translateMove(origMoves[i], boardKey), 'b', 5, -100000, 100000);
+                value = miniMax(translateMove(origMoves[i], boardKey), 'b', 7, -100000, 100000);
             } else {
-                value = miniMax(translateMove(origMoves[i], boardKey), 'r', 5, -100000, 100000);
+                value = miniMax(translateMove(origMoves[i], boardKey), 'r', 7, -100000, 100000);
             }
 
             if (value > val) {
@@ -532,6 +553,74 @@ double neuralNet::boardEval(std::string b, char t) {
         return reds-blacks;
     } else if(t=='b') {
         return blacks-reds;
+    }
+}
+
+double neuralNet::miniMaxPC(std::string b, char turn, int depth, double alpha, double beta) {
+    if(depth==0 && turn == 'r') {
+        return boardEval(b, 'r');
+    } else if(depth==0 && turn == 'b') {
+        return boardEval(b, 'b');
+    }
+    std::vector<std::vector<neuralNet::theMove>> moveList;
+
+    if(turn == 'r') {
+        moveList = getRedMoves(b);
+    } else if(turn == 'b') {
+        moveList = getBlackMoves(b);
+    }
+
+    //maxPlayer is what denotes maxNode vs minNode
+    if(turn == maxPlayer) {
+        double bestVal = -100000;
+        //maxNode for red
+        if(turn == 'r') {
+            for(std::vector<theMove> x : moveList) {
+                double value = miniMax(translateMove(x , b), 'b', depth-1, alpha, beta);
+                bestVal = std::max(bestVal, value);
+                alpha = std::max(alpha, bestVal);
+                if(beta <= alpha) {
+                    break;
+                }
+            }
+            return bestVal;
+            // maxNode for black
+        } else if(turn == 'b') {
+            for(std::vector<theMove> x : moveList) {
+                double value = miniMax(translateMove(x , b), 'r', depth-1, alpha, beta);
+                bestVal = std::max(bestVal, value);
+                alpha = std::max(alpha, bestVal);
+                if(beta <= alpha) {
+                    break;
+                }
+            }
+            return bestVal;
+        }
+
+    } else  {
+        double bestVal=100000;
+        if(turn == 'r') {
+            for(std::vector<theMove> x : moveList) {
+                double value = miniMax(translateMove(x , b), 'b', depth-1, alpha, beta);
+                bestVal = std::min(bestVal, value);
+                beta = std::min(bestVal, beta);
+                if (beta <= alpha) {
+                    break;
+                }
+            }
+            return bestVal;
+        } else if(turn == 'b') {
+            for(std::vector<theMove> x : moveList) {
+                double value = miniMax(translateMove(x , b), 'r', depth-1, alpha, beta);
+                bestVal = std::min(bestVal, value);
+                beta = std::min(bestVal, beta);
+                if(beta <= alpha) {
+                    break;
+                }
+            }
+            return bestVal;
+        }
+
     }
 }
 
