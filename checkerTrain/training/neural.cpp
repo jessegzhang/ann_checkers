@@ -28,6 +28,7 @@ neuralNet::neuralNet(){
     generateRedJumpTable();
     generateBlackMoveTable();
     generateBlackJumpTable();
+    makeChecker();
     dumbAI=false;
     countTurn =-1;
 }
@@ -111,7 +112,7 @@ std::vector<neuralNet::theMove> neuralNet::requestMove(bool whoT) {
         boardKey=translateMove(origMoves[it], boardKey);
         //sends the move
         return origMoves[it];
-    }
+    
 
         //smartAIMoves
     } else {
@@ -133,9 +134,9 @@ std::vector<neuralNet::theMove> neuralNet::requestMove(bool whoT) {
             double value;
             if (whoT) {
                 //red turn max
-                value = miniMax(translateMove(origMoves[i], boardKey), 'b', 7, -100000, 100000);
+                value = miniMax(translateMove(origMoves[i], boardKey), 'b', 5, -100000, 100000);
             } else {
-                value = miniMax(translateMove(origMoves[i], boardKey), 'r', 7, -100000, 100000);
+                value = miniMax(translateMove(origMoves[i], boardKey), 'r', 5, -100000, 100000);
             }
 
             if (value > val) {
