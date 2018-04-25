@@ -40,6 +40,7 @@ public:
     void loadWeights(std::string file);
     void getNeuralNet(std::vector<int> lay);
     void saveWeights(std::string file);
+    void setAI(bool ai){ dumbAI=ai; };
     std::string translateMove(std::vector<theMove> move, std::string board);
 
 private:
@@ -98,6 +99,7 @@ private:
     std::vector<std::vector<theMove>> redMoves;
     std::vector<std::vector<theMove>> blackMoves;
     double miniMax(std::string b, char turn, int depth, double alpha, double beta);
+    double miniMaxPC(std::string b, char turn, int depth, double alpha, double beta);
     double boardEval(std::string b, char t);
 
 };

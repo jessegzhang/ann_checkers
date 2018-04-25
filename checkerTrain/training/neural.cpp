@@ -78,7 +78,7 @@ std::vector<neuralNet::theMove> neuralNet::requestMove(bool whoT) {
     //random AI Moves
     //This is the flag for turning on the dumbAI that does moves at random
     //Training should look to beat this and piece count
-    if(true){
+    if(dumbAI){
         //initalization of the possible moves
         std::vector<std::vector<theMove>> origMoves;
         //initalizes maxPlayer for the minimax tree with alpha beta pruning
@@ -97,9 +97,9 @@ std::vector<neuralNet::theMove> neuralNet::requestMove(bool whoT) {
             double value;
             if (whoT) {
                 //red turn max
-                value = miniMaxPC(translateMove(origMoves[i], boardKey), 'b', 9, -100000, 100000);
+                value = miniMaxPC(translateMove(origMoves[i], boardKey), 'b', 5, -100000, 100000);
             } else {
-                value = miniMaxPC(translateMove(origMoves[i], boardKey), 'r', 9, -100000, 100000);
+                value = miniMaxPC(translateMove(origMoves[i], boardKey), 'r', 5, -100000, 100000);
             }
 
             if (value > val) {
@@ -134,9 +134,9 @@ std::vector<neuralNet::theMove> neuralNet::requestMove(bool whoT) {
             double value;
             if (whoT) {
                 //red turn max
-                value = miniMax(translateMove(origMoves[i], boardKey), 'b', 5, -100000, 100000);
+                value = miniMax(translateMove(origMoves[i], boardKey), 'b', 7, -100000, 100000);
             } else {
-                value = miniMax(translateMove(origMoves[i], boardKey), 'r', 5, -100000, 100000);
+                value = miniMax(translateMove(origMoves[i], boardKey), 'r', 7, -100000, 100000);
             }
 
             if (value > val) {
